@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Contabilidad Canaria 🇮🇨</title>
+    <style>
+        :root { --primary: #2c3e50; --secondary: #3498db; --accent: #27ae60; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 10px; color: #333; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
+        .header { text-align: center; border-bottom: 4px solid var(--secondary); margin-bottom: 20px; padding-bottom: 10px; }
+        
+        /* Navigation */
+        .nav-menu { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; justify-content: center; }
+        .nav-btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; background: #dfe6e9; font-weight: bold; transition: 0.3s; }
+        .nav-btn.active { background: var(--secondary); color: white; }
+
+        /* Content Area */
+        .content-box { display: none; animation: fadeIn 0.4s; }
+        .content-box.active { display: block; }
+        
+        .theory-section { background: #f9f9f9; padding: 20px; border-radius: 10px; border-left: 6px solid var(--secondary); margin-bottom: 20px; }
+        .quiz-section { background: #fff; padding: 20px; border: 2px dashed #ccc; border-radius: 10px; }
+        
+        .option { display: block; background: #f1f2f6; padding: 12px; margin: 8px 0; border-radius: 8px; cursor: pointer; border: 2px solid transparent; }
+        .option:hover { border-color: var(--secondary); }
+        .feedback { padding: 10px; border-radius: 5px; margin-top: 10px; display: none; font-weight: bold; }
+        
+        h2 { color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        h3 { color: var(--secondary); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .igic-badge { background: #f39c12; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Tutor de Contabilidad 🇮🇨</h1>
+        <p>Kurs für Administrativas in der Asesoría Fiscal</p>
+    </div>
+
+    <div class="nav-menu" id="nav-menu">
+        <button class="nav-btn active" onclick="showModule(0)">1. Grundlagen</button>
+        <button class="nav-btn" onclick="showModule(1)">2. Jahresabschluss</button>
+        <button class="nav-btn" onclick="showModule(2)">3. Kosten</button>
+        <button class="nav-btn" onclick="showModule(3)">4. Budget</button>
+        <button class="nav-btn" onclick="showModule(4)">5. Steuern/IGIC</button>
+    </div>
+
+    <div id="module-container">
+        </div>
+</div>
+
+<script>
+    const modules = [
+        {
+            title: "Modul 1: Grundlagen (Activo, Pasivo, Neto)",
+            theory: `<h3>Was die Firma hat und was sie schuldet</h3>
+                    <p>In der Buchhaltung gibt es drei Grundpfeiler:</p>
+                    <ul>
+                        <li><strong>Activo (Vermögen):</strong> Alles, was der Firma gehört (Geld auf der Bank, Computer, offene Rechnungen an Kunden).</li>
+                        <li><strong>Pasivo (Schulden):</strong> Geld, das wir Dritten schulden (Bankkredite, unbezahlte Rechnungen an Lieferanten).</li>
+                        <li><strong>Patrimonio Neto (Eigenkapital):</strong> Was übrig bleibt, wenn man alle Schulden vom Vermögen abzieht.</li>
+                    </ul>
+                    <p><strong>Die goldene Regel:</strong> Activo = Pasivo + Patrimonio Neto.</p>`,
+            question: "Ein Kunde bezahlt seine Rechnung per Banküberweisung. Was passiert?",
+            options: ["Das Activo steigt und sinkt gleichzeitig (Bank hoch, Forderung runter)", "Nur das Activo steigt", "Das Pasivo sinkt"],
+            correct: 0,
+            feedback: "Richtig! Das nennt man Aktivtausch. Ein Vermögenswert wird zu einem anderen."
+        },
+        {
+            title: "Modul 2: Jahresabschluss (PyG & Balance)",
+            theory: `<h3>Gewinn oder Verlust?</h3>
+                    <p>Zwei Dokumente sind entscheidend:</p>
+                    <ul>
+                        <li><strong>Balance de Situación:</strong> Ein Foto der Firma an einem bestimmten Tag (Was haben wir, was schulden wir?).</li>
+                        <li><strong>Cuenta de Pérdidas y Ganancias (PyG):</strong> Ein Film über das ganze Jahr. Hier stehen Einnahmen (Ingresos) und Ausgaben (Gastos).</li>
+                    </ul>
+                    <p>Wenn Ingresos > Gastos = Gewinn (Beneficio).</p>`,
+            question: "Wo tauchen die monatlichen Mietkosten der Asesoría auf?",
+            options: ["Im Balance de Situación", "In der Cuenta de Pérdidas y Ganancias", "Im Grundbuch"],
+            correct: 1,
+            feedback: "Korrekt! Miete ist ein laufender Aufwand (Gasto) und gehört in die Gewinn-und-Verlust-Rechnung."
+        },
+        {
+            title: "Modul 3: Kostenkontrolle",
+            theory: `<h3>Fixe vs. Variable Kosten</h3>
+                    <p>Um ein Unternehmen zu steuern, muss man wissen, wo das Geld bleibt:</p>
+                    <ul>
+                        <li><strong>Costes Fijos (Fixkosten):</strong> Fallen immer an, egal wie viel wir arbeiten (z.B. Miete, Internet).</li>
+                        <li><strong>Costes Variables (Variable Kosten):</strong> Ändern sich mit der Menge der Arbeit (z.B. Papierverbrauch, Toner, wenn wir mehr drucken).</li>
+                    </ul>`,
+            question: "Das Gehalt einer festangestellten administrativen Kraft ist meistens ein...",
+            options: ["Variable Kostenfaktor", "Fixer Kostenfaktor", "Investition"],
+            correct: 1,
+            feedback: "Genau. Das Gehalt wird jeden Monat gezahlt, unabhängig von der Anzahl der Kundenrechnungen."
+        },
+        {
+            title: "Modul 4: Budgetierung",
+            theory: `<h3>Planung ist alles</h3>
+                    <p>Ein <strong>Presupuesto</strong> (Budget) hilft uns, Ziele zu setzen. Am Ende des Monats vergleichen wir:</p>
+                    <p><strong>Desviación (Abweichung):</strong> Ist die Differenz zwischen dem, was wir geplant haben, und dem, was tatsächlich passiert ist.</p>`,
+            question: "Wenn wir 500€ für Werbung geplant haben, aber 700€ ausgeben, nennen wir die 200€ Differenz...",
+            options: ["Amortisation", "Desviación (Abweichung)", "IGIC"],
+            correct: 1,
+            feedback: "Richtig! Wir müssen nun analysieren, warum wir mehr ausgegeben haben als geplant."
+        },
+        {
+            title: "Modul 5: Steuern & IGIC <span class='igic-badge'>Kanaren Spezial</span>",
+            theory: `<h3>IGIC statt IVA</h3>
+                    <p>Auf den Kanaren nutzen wir das IGIC. Wichtig für dich in der Asesoría:</p>
+                    <ul>
+                        <li><strong>IGIC Repercutido:</strong> Das stellen wir dem Kunden in Rechnung (Schulden gegenüber dem Finanzamt).</li>
+                        <li><strong>IGIC Soportado:</strong> Das bezahlen wir bei Einkäufen (Guthaben gegenüber dem Finanzamt).</li>
+                        <li><strong>Tipo General:</strong> Meistens 7%.</li>
+                    </ul>`,
+            question: "Du buchst eine Eingangsrechnung (Kauf von Büromaterial). Das IGIC darauf ist für die Firma...",
+            options: ["Ein Gasto (Aufwand)", "Ein Activo (Forderung gegen das Finanzamt)", "Ein Pasivo (Schuld)"],
+            correct: 1,
+            feedback: "Sehr gut! 'Soportado' bedeutet, wir dürfen es später von unserer Steuerlast abziehen. Es ist ein Recht (Activo)."
+        }
+    ];
+
+    function showModule(index) {
+        // Nav-Buttons stylen
+        const buttons = document.querySelectorAll('.nav-btn');
+        buttons.forEach((btn, i) => {
+            btn.classList.toggle('active', i === index);
+        });
+
+        // Inhalt generieren
+        const mod = modules[index];
+        const container = document.getElementById('module-container');
+        container.innerHTML = `
+            <div class="content-box active">
+                <h2>${mod.title}</h2>
+                <div class="theory-section">
+                    ${mod.theory}
+                </div>
+                <div class="quiz-section">
+                    <h3>Kurz-Check</h3>
+                    <p><strong>${mod.question}</strong></p>
+                    <div id="options">
+                        ${mod.options.map((opt, i) => `<div class="option" onclick="checkAnswer(${i}, ${mod.correct})">${opt}</div>`).join('')}
+                    </div>
+                    <div id="feedback" class="feedback"></div>
+                </div>
+            </div>
+        `;
+    }
+
+    function checkAnswer(selected, correct) {
+        const fb = document.getElementById('feedback');
+        fb.style.display = 'block';
+        if(selected === correct) {
+            fb.innerHTML = "✅ " + modules.find(m => m.question.includes(document.querySelector('strong').innerText)).feedback;
+            fb.style.background = "#d4edda";
+            fb.style.color = "#155724";
+        } else {
+            fb.innerHTML = "❌ Nicht ganz! Lies dir die Theorie nochmal kurz durch und versuch es gleich nochmal.";
+            fb.style.background = "#f8d7da";
+            fb.style.color = "#721c24";
+        }
+    }
+
+    // Initial das erste Modul laden
+    showModule(0);
+</script>
+
+</body>
+</html>
