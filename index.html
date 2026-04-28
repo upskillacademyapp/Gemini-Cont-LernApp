@@ -3,169 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Contabilidad Canaria 🇮🇨</title>
+    <title>Master Contabilidad Canaria - v2.0</title>
     <style>
-        :root { --primary: #2c3e50; --secondary: #3498db; --accent: #27ae60; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 10px; color: #333; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
-        .header { text-align: center; border-bottom: 4px solid var(--secondary); margin-bottom: 20px; padding-bottom: 10px; }
+        :root { --primary: #2c3e50; --secondary: #3498db; --success: #27ae60; --error: #e74c3c; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 15px; color: #333; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
+        .header { text-align: center; border-bottom: 4px solid var(--secondary); margin-bottom: 20px; }
         
-        /* Navigation */
-        .nav-menu { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; justify-content: center; }
-        .nav-btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; background: #dfe6e9; font-weight: bold; transition: 0.3s; }
+        .nav-menu { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; justify-content: center; }
+        .nav-btn { padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; background: #dfe6e9; font-weight: bold; transition: 0.3s; font-size: 0.9em; }
         .nav-btn.active { background: var(--secondary); color: white; }
 
-        /* Content Area */
         .content-box { display: none; animation: fadeIn 0.4s; }
         .content-box.active { display: block; }
         
-        .theory-section { background: #f9f9f9; padding: 20px; border-radius: 10px; border-left: 6px solid var(--secondary); margin-bottom: 20px; }
-        .quiz-section { background: #fff; padding: 20px; border: 2px dashed #ccc; border-radius: 10px; }
+        .theory-section { background: #f9f9f9; padding: 15px; border-radius: 10px; border-left: 6px solid var(--secondary); margin-bottom: 20px; font-size: 0.95em; }
+        .quiz-section { background: #fff; padding: 20px; border: 2px solid #eee; border-radius: 10px; position: relative; }
         
-        .option { display: block; background: #f1f2f6; padding: 12px; margin: 8px 0; border-radius: 8px; cursor: pointer; border: 2px solid transparent; }
-        .option:hover { border-color: var(--secondary); }
-        .feedback { padding: 10px; border-radius: 5px; margin-top: 10px; display: none; font-weight: bold; }
+        .option { display: block; background: #fff; padding: 15px; margin: 10px 0; border-radius: 8px; cursor: pointer; border: 2px solid #edeff0; transition: 0.2s; }
+        .option:hover { background: #f8f9fa; border-color: var(--secondary); }
+        .option.correct { background: #d4edda !important; border-color: var(--success) !important; color: #155724; font-weight: bold; }
+        .option.wrong { background: #f8d7da !important; border-color: var(--error) !important; color: #721c24; }
         
-        h2 { color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        h3 { color: var(--secondary); }
+        .feedback-area { margin-top: 15px; padding: 15px; border-radius: 8px; display: none; font-weight: 500; text-align: center; }
+        
+        .btn-next { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; display: none; margin: 15px auto 0; }
+        
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .igic-badge { background: #f39c12; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; }
+        .badge { background: #f39c12; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-left: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>Tutor de Contabilidad 🇮🇨</h1>
-        <p>Kurs für Administrativas in der Asesoría Fiscal</p>
+        <h1>Academia de Contabilidad 🇮🇨</h1>
+        <p>Training für die Asesoría Fiscal</p>
     </div>
 
     <div class="nav-menu" id="nav-menu">
-        <button class="nav-btn active" onclick="showModule(0)">1. Grundlagen</button>
-        <button class="nav-btn" onclick="showModule(1)">2. Jahresabschluss</button>
-        <button class="nav-btn" onclick="showModule(2)">3. Kosten</button>
-        <button class="nav-btn" onclick="showModule(3)">4. Budget</button>
-        <button class="nav-btn" onclick="showModule(4)">5. Steuern/IGIC</button>
+        <button class="nav-btn active" onclick="changeModule(0)">1. Grundlagen</button>
+        <button class="nav-btn" onclick="changeModule(1)">2. Abschluss</button>
+        <button class="nav-btn" onclick="changeModule(2)">3. Kosten</button>
+        <button class="nav-btn" onclick="changeModule(3)">4. Budget</button>
+        <button class="nav-btn" onclick="changeModule(4)">5. Steuern</button>
     </div>
 
-    <div id="module-container">
+    <div id="module-display">
+        <div class="theory-section" id="theory-text"></div>
+        <div class="quiz-section">
+            <div id="question-counter" style="color: #7f8c8d; font-size: 0.8em; margin-bottom: 10px;"></div>
+            <div id="question-text" style="font-weight: bold; font-size: 1.1em; margin-bottom: 15px;"></div>
+            <div id="options-container"></div>
+            <div id="feedback-area" class="feedback-area"></div>
+            <button id="btn-next" class="btn-next" onclick="nextQuestion()">Nächste Frage</button>
         </div>
+    </div>
 </div>
 
 <script>
-    const modules = [
+    const database = [
         {
             title: "Modul 1: Grundlagen (Activo, Pasivo, Neto)",
-            theory: `<h3>Was die Firma hat und was sie schuldet</h3>
-                    <p>In der Buchhaltung gibt es drei Grundpfeiler:</p>
-                    <ul>
-                        <li><strong>Activo (Vermögen):</strong> Alles, was der Firma gehört (Geld auf der Bank, Computer, offene Rechnungen an Kunden).</li>
-                        <li><strong>Pasivo (Schulden):</strong> Geld, das wir Dritten schulden (Bankkredite, unbezahlte Rechnungen an Lieferanten).</li>
-                        <li><strong>Patrimonio Neto (Eigenkapital):</strong> Was übrig bleibt, wenn man alle Schulden vom Vermögen abzieht.</li>
-                    </ul>
-                    <p><strong>Die goldene Regel:</strong> Activo = Pasivo + Patrimonio Neto.</p>`,
-            question: "Ein Kunde bezahlt seine Rechnung per Banküberweisung. Was passiert?",
-            options: ["Das Activo steigt und sinkt gleichzeitig (Bank hoch, Forderung runter)", "Nur das Activo steigt", "Das Pasivo sinkt"],
-            correct: 0,
-            feedback: "Richtig! Das nennt man Aktivtausch. Ein Vermögenswert wird zu einem anderen."
+            theory: "<b>Kernkonzept:</b> Die Bilanzwaage. Activo (Besitz) steht links, Pasivo (Schulden) und Neto (Eigenkapital) stehen rechts. Alles, was die Firma 'hat', muss irgendwoher finanziert sein.",
+            questions: [
+                { q: "Was ist ein 'Activo'?", a: ["Eine Schuld beim Finanzamt", "Ein Gut oder Recht im Besitz der Firma", "Der Gewinn am Jahresende"], c: 1, f: "Richtig! Alles was wir besitzen (Geld, Ware, Forderungen) ist Activo." },
+                { q: "Wo wird eine Erhöhung des Bankguthabens gebucht?", a: ["Im Debe (Soll)", "Im Haber (Haben)"], c: 0, f: "Korrekt. Activo-Konten steigen im Debe." },
+                { q: "Was ist das 'Patrimonio Neto'?", a: ["Das Bruttogehalt", "Activo minus Pasivo", "Die Summe aller Rechnungen"], c: 1, f: "Genau. Es ist der Reinwert der Firma." },
+                { q: "Ein Kunde schuldet uns Geld. Das ist ein...", a: ["Activo (Cliente)", "Pasivo (Proveedor)", "Gasto"], c: 0, f: "Richtig. Forderungen sind Vermögenswerte." },
+                { q: "Wir kaufen einen Laptop bar. Was passiert?", a: ["Activo steigt und sinkt (Aktivtausch)", "Nur das Pasivo steigt", "Das Neto sinkt"], c: 0, f: "Richtig! Geld geht weg, Laptop kommt." },
+                { q: "Was bedeutet 'Amortización'?", a: ["Eine Strafe", "Wertverlust von Anlagen (z.B. PKW)", "Zinsen"], c: 1, f: "Richtig. Anlagen verlieren über Zeit an Wert." },
+                { q: "Wo stehen Schulden bei Lieferanten?", a: ["Activo", "Pasivo", "Neto"], c: 1, f: "Korrekt. Das sind Verbindlichkeiten." },
+                { q: "Die Rechtsform 'S.L.' bezieht sich meist auf...", a: ["Das Pasivo", "Das Patrimonio Neto (Stammkapital)", "Den Gasto"], c: 1, f: "Richtig. Das Kapital der Gesellschafter ist Neto." },
+                { q: "Ein Darlehen mit 5 Jahren Laufzeit ist...", a: ["Pasivo Corriente", "Pasivo No Corriente", "Activo"], c: 1, f: "Richtig. Mehr als 12 Monate = No Corriente." },
+                { q: "Buchhaltung muss immer 'ausgeglichen' sein. Das nennt man...", a: ["Partida Doble (Doppelte Buchführung)", "IGIC-Check", "PyG"], c: 0, f: "Genau! Soll muss immer gleich Haben sein." }
+            ]
         },
         {
             title: "Modul 2: Jahresabschluss (PyG & Balance)",
-            theory: `<h3>Gewinn oder Verlust?</h3>
-                    <p>Zwei Dokumente sind entscheidend:</p>
-                    <ul>
-                        <li><strong>Balance de Situación:</strong> Ein Foto der Firma an einem bestimmten Tag (Was haben wir, was schulden wir?).</li>
-                        <li><strong>Cuenta de Pérdidas y Ganancias (PyG):</strong> Ein Film über das ganze Jahr. Hier stehen Einnahmen (Ingresos) und Ausgaben (Gastos).</li>
-                    </ul>
-                    <p>Wenn Ingresos > Gastos = Gewinn (Beneficio).</p>`,
-            question: "Wo tauchen die monatlichen Mietkosten der Asesoría auf?",
-            options: ["Im Balance de Situación", "In der Cuenta de Pérdidas y Ganancias", "Im Grundbuch"],
-            correct: 1,
-            feedback: "Korrekt! Miete ist ein laufender Aufwand (Gasto) und gehört in die Gewinn-und-Verlust-Rechnung."
+            theory: "<b>Kernkonzept:</b> Das Balance ist ein Standbild (Foto), die Cuenta de Pérdidas y Ganancias (PyG) ist ein Film des gesamten Jahresverlaufs.",
+            questions: [
+                { q: "Was zeigt die 'Cuenta de PyG'?", a: ["Den Kontostand", "Gewinn oder Verlust", "Alle Kundenadressen"], c: 1, f: "Richtig. Sie vergleicht Erträge und Aufwendungen." },
+                { q: "Was ist ein 'Ingreso'?", a: ["Eine Einzahlung bei der Bank", "Ein Ertrag durch Verkauf/Leistung", "Ein Kredit"], c: 1, f: "Korrekt. Nicht jede Einzahlung ist ein Ertrag!" },
+                { q: "Das 'Balance de Situación' zeigt...", a: ["Nur die Ausgaben", "Vermögen und Schulden zu einem Stichtag", "Die Steuerlast"], c: 1, f: "Richtig. Es ist die Momentaufnahme." },
+                { q: "Was ist das Ergebnis, wenn Gastos > Ingresos?", a: ["Beneficio (Gewinn)", "Pérdida (Verlust)", "Balance"], c: 1, f: "Korrekt. Das Unternehmen macht Minus." },
+                { q: "Wo landen die 'Suplementos de transporte'?", a: ["Activo", "Gasto (PyG)", "Pasivo"], c: 1, f: "Richtig. Transportkosten sind Aufwand." },
+                { q: "Was passiert mit dem Jahresgewinn?", a: ["Er verschwindet", "Er erhöht das Patrimonio Neto", "Er mindert das Activo"], c: 1, f: "Richtig. Gewinn macht die Firma wertvoller." },
+                { q: "Welches Konto ist ein 'Gasto'?", a: ["Bank", "Miete (Arrendamientos)", "Kunde"], c: 1, f: "Korrekt. Miete ist ein klassischer Aufwand." },
+                { q: "Was bedeutet 'Asiento de Cierre'?", a: ["Ladenschluss", "Abschlussbuchung des Jahres", "Insolvenz"], c: 1, f: "Richtig. Damit wird das Jahr beendet." },
+                { q: "Wo steht das Inventar (Vorräte)?", a: ["Im Activo des Balance", "In der PyG", "Im Pasivo"], c: 0, f: "Richtig. Vorräte sind Vermögen." },
+                { q: "Was ist 'EBITDA'?", a: ["Eine Steuerart", "Ergebnis vor Zinsen und Steuern", "Ein Bankkonto"], c: 1, f: "Korrekt. Eine wichtige Kennzahl im Abschluss." }
+            ]
         },
         {
             title: "Modul 3: Kostenkontrolle",
-            theory: `<h3>Fixe vs. Variable Kosten</h3>
-                    <p>Um ein Unternehmen zu steuern, muss man wissen, wo das Geld bleibt:</p>
-                    <ul>
-                        <li><strong>Costes Fijos (Fixkosten):</strong> Fallen immer an, egal wie viel wir arbeiten (z.B. Miete, Internet).</li>
-                        <li><strong>Costes Variables (Variable Kosten):</strong> Ändern sich mit der Menge der Arbeit (z.B. Papierverbrauch, Toner, wenn wir mehr drucken).</li>
-                    </ul>`,
-            question: "Das Gehalt einer festangestellten administrativen Kraft ist meistens ein...",
-            options: ["Variable Kostenfaktor", "Fixer Kostenfaktor", "Investition"],
-            correct: 1,
-            feedback: "Genau. Das Gehalt wird jeden Monat gezahlt, unabhängig von der Anzahl der Kundenrechnungen."
+            theory: "<b>Kernkonzept:</b> Fixkosten bleiben gleich, variable Kosten ändern sich mit der Menge der erbrachten Dienstleistung oder Produktion.",
+            questions: [
+                { q: "Was sind Fixkosten?", a: ["Kosten für Rohstoffe", "Miete, Versicherung, Gehälter", "Provisionen"], c: 1, f: "Richtig. Sie fallen unabhängig vom Umsatz an." },
+                { q: "Was ist ein 'Coste Variable'?", a: ["Büromiete", "Verpackungsmaterial für Produkte", "Kreditraten"], c: 1, f: "Richtig. Mehr Produkte = Mehr Verpackung." },
+                { q: "Was beschreibt der 'Punto de Equilibrio' (Break-Even)?", a: ["Den Moment, ab dem man Gewinn macht", "Den Kontostand Null", "Die Steuerquote"], c: 0, f: "Korrekt. Kosten = Erlöse." },
+                { q: "Gehälter in der Verwaltung sind meist...", a: ["Variable Kosten", "Fixkosten", "Steuern"], c: 1, f: "Richtig. Sie ändern sich nicht pro verkauftem Artikel." },
+                { q: "Was sind 'Costes Indirectos'?", a: ["Kosten, die nicht direkt einem Produkt zugeordnet werden (z.B. Strom)", "Direkte Materialkosten", "Rabatte"], c: 0, f: "Richtig!" },
+                { q: "Warum kontrolliert man Kosten?", a: ["Um mehr Steuern zu zahlen", "Um die Rentabilität zu verbessern", "Wegen dem Wetter"], c: 1, f: "Logisch! Effizienz ist das Ziel." },
+                { q: "Was ist eine 'Margen de Beneficio'?", a: ["Der Bruttoumsatz", "Der prozentuale Gewinnanteil", "Die Mehrwertsteuer"], c: 1, f: "Richtig. Spanne zwischen Kosten und Preis." },
+                { q: "Stromkosten in einer Fabrik sind oft...", a: ["Fix", "Variabel (je nach Maschinennutzung)", "Neto"], c: 1, f: "Korrekt. Je mehr produziert wird, desto mehr Strom." },
+                { q: "Was ist 'Contabilidad de Costes'?", a: ["Interne Buchhaltung zur Steuerung", "Externe Bilanz fürs Finanzamt", "Lohnabrechnung"], c: 0, f: "Richtig. Sie dient dem Management." },
+                { q: "Ein Firmenwagen verursacht...", a: ["Nur Fixkosten", "Sowohl Fixe (Versicherung) als auch Variable (Sprit) Kosten", "Keine Kosten"], c: 1, f: "Exakt!" }
+            ]
         },
         {
-            title: "Modul 4: Budgetierung",
-            theory: `<h3>Planung ist alles</h3>
-                    <p>Ein <strong>Presupuesto</strong> (Budget) hilft uns, Ziele zu setzen. Am Ende des Monats vergleichen wir:</p>
-                    <p><strong>Desviación (Abweichung):</strong> Ist die Differenz zwischen dem, was wir geplant haben, und dem, was tatsächlich passiert ist.</p>`,
-            question: "Wenn wir 500€ für Werbung geplant haben, aber 700€ ausgeben, nennen wir die 200€ Differenz...",
-            options: ["Amortisation", "Desviación (Abweichung)", "IGIC"],
-            correct: 1,
-            feedback: "Richtig! Wir müssen nun analysieren, warum wir mehr ausgegeben haben als geplant."
+            title: "Modul 4: Budgetierung (Presupuestos)",
+            theory: "<b>Kernkonzept:</b> Ein Budget ist ein Plan für die Zukunft. Die Abweichungsanalyse (Desviaciones) zeigt, wo man vom Plan abgekommen ist.",
+            questions: [
+                { q: "Was ist ein 'Presupuesto'?", a: ["Eine alte Rechnung", "Ein Plan für zukünftige Einnahmen/Ausgaben", "Eine Steuererklärung"], c: 1, f: "Richtig. Planung ist das A und O." },
+                { q: "Was ist eine 'Desviación'?", a: ["Ein Umweg", "Differenz zwischen Plan und Ist", "Ein Rabatt"], c: 1, f: "Korrekt. Abweichungsanalyse." },
+                { q: "Was ist ein 'Presupuesto de Tesorería'?", a: ["Liquiditätsplanung (Bargeld/Bank)", "Marketingplan", "Inventarliste"], c: 0, f: "Richtig. Damit man immer zahlungsfähig bleibt." },
+                { q: "Ist eine negative Abweichung bei Kosten gut?", a: ["Ja (weniger ausgegeben als geplant)", "Nein (mehr ausgegeben)", "Immer egal"], c: 0, f: "Richtig. Weniger Kosten als geplant ist super!" },
+                { q: "Wer erstellt meist das Budget?", a: ["Das Finanzamt", "Die Geschäftsführung / Controlling", "Die Kunden"], c: 1, f: "Genau." },
+                { q: "Ein Budgetzeitraum ist meist...", a: ["Ein Monat oder ein Jahr", "10 Jahre", "Eine Woche"], c: 0, f: "Korrekt." },
+                { q: "Was bedeutet 'Previsión de Ventas'?", a: ["Rückblick auf Verkäufe", "Verkaufsprognose", "Lagerbestand"], c: 1, f: "Richtig." },
+                { q: "Was tun bei großer Desviación?", a: ["Ignorieren", "Ursachen analysieren und Plan anpassen", "Firma schließen"], c: 1, f: "Korrekt. Gegensteuern ist wichtig." },
+                { q: "Investitionsbudget nennt man auch...", a: ["CAPEX", "OPEX", "IGIC"], c: 0, f: "Richtig (Capital Expenditure)." },
+                { q: "Was ist 'Zufall' in der Budgetierung?", a: ["Eine geplante Größe", "Ein Risiko/Unvorhersehbares Ereignis", "Ein Gasto"], c: 1, f: "Genau. Risikomanagement gehört dazu." }
+            ]
         },
         {
-            title: "Modul 5: Steuern & IGIC <span class='igic-badge'>Kanaren Spezial</span>",
-            theory: `<h3>IGIC statt IVA</h3>
-                    <p>Auf den Kanaren nutzen wir das IGIC. Wichtig für dich in der Asesoría:</p>
-                    <ul>
-                        <li><strong>IGIC Repercutido:</strong> Das stellen wir dem Kunden in Rechnung (Schulden gegenüber dem Finanzamt).</li>
-                        <li><strong>IGIC Soportado:</strong> Das bezahlen wir bei Einkäufen (Guthaben gegenüber dem Finanzamt).</li>
-                        <li><strong>Tipo General:</strong> Meistens 7%.</li>
-                    </ul>`,
-            question: "Du buchst eine Eingangsrechnung (Kauf von Büromaterial). Das IGIC darauf ist für die Firma...",
-            options: ["Ein Gasto (Aufwand)", "Ein Activo (Forderung gegen das Finanzamt)", "Ein Pasivo (Schuld)"],
-            correct: 1,
-            feedback: "Sehr gut! 'Soportado' bedeutet, wir dürfen es später von unserer Steuerlast abziehen. Es ist ein Recht (Activo)."
+            title: "Modul 5: Steuern & IGIC 🇮🇨",
+            theory: "<b>Kernkonzept:</b> Auf den Kanaren gilt das IGIC (Impuesto General Indirecto Canario). IGIC Soportado (Einkauf) ist ein Activo, IGIC Repercutido (Verkauf) ist ein Pasivo.",
+            questions: [
+                { q: "Wie hoch ist der allgemeine IGIC-Satz?", a: ["21%", "7%", "15%"], c: 1, f: "Richtig! 7% ist der Standardtyp." },
+                { q: "IGIC 'Soportado' entsteht beim...", a: ["Verkauf an Kunden", "Einkauf bei Lieferanten", "Lohncheck"], c: 1, f: "Korrekt. Wir 'ertragen' die Steuer beim Kauf." },
+                { q: "IGIC 'Repercutido' ist für die Firma...", a: ["Eine Forderung", "Eine Verbindlichkeit gegenüber dem Finanzamt", "Ein Gewinn"], c: 1, f: "Richtig. Wir ziehen es für das Finanzamt ein." },
+                { q: "Welches Formular nutzt man meist quartalsweise?", a: ["Modelo 303 (IVA)", "Modelo 420 (IGIC)", "Modelo 100"], c: 1, f: "Richtig! 420 ist das kanarische Pendant zum 303." },
+                { q: "Was ist 'IGIC a compensar'?", a: ["Steuerguthaben aus dem Vorquartal", "Eine Strafe", "Einkommensteuer"], c: 0, f: "Korrekt. Wenn wir mehr gezahlt als eingenommen haben." },
+                { q: "Gibt es 0% IGIC?", a: ["Nein", "Ja (z.B. bestimmte Lebensmittel/Bücher)", "Nur sonntags"], c: 1, f: "Richtig. Der 'Tipo Cero' existiert." },
+                { q: "Importe von der Halbinsel (Península) unterliegen...", a: ["Dem IVA", "Dem IGIC bei Einfuhr (Aduana)", "Keiner Steuer"], c: 1, f: "Korrekt. Der Zoll (Aduana) prüft das IGIC." },
+                { q: "Was ist das 'Modelo 425'?", a: ["Monatliche Meldung", "Jährliche Zusammenfassung (Resumen Anual)", "Gewerbeanmeldung"], c: 1, f: "Richtig." },
+                { q: "Wer zahlt letztendlich das IGIC?", a: ["Die Firma", "Der Endverbraucher", "Die Bank"], c: 1, f: "Genau. Die Firma ist nur der Steuereintreiber." },
+                { q: "IGIC Soportado auf ein Auto für die Firma ist...", a: ["Immer 100% abziehbar", "Oft nur zu 50% abziehbar (je nach Nutzung)", "Nicht abziehbar"], c: 1, f: "Korrekt. Ein wichtiges Thema in der Asesoría!" }
+            ]
         }
     ];
 
-    function showModule(index) {
-        // Nav-Buttons stylen
-        const buttons = document.querySelectorAll('.nav-btn');
-        buttons.forEach((btn, i) => {
-            btn.classList.toggle('active', i === index);
-        });
+    let currentMod = 0;
+    let currentQuest = 0;
 
-        // Inhalt generieren
-        const mod = modules[index];
-        const container = document.getElementById('module-container');
-        container.innerHTML = `
-            <div class="content-box active">
-                <h2>${mod.title}</h2>
-                <div class="theory-section">
-                    ${mod.theory}
-                </div>
-                <div class="quiz-section">
-                    <h3>Kurz-Check</h3>
-                    <p><strong>${mod.question}</strong></p>
-                    <div id="options">
-                        ${mod.options.map((opt, i) => `<div class="option" onclick="checkAnswer(${i}, ${mod.correct})">${opt}</div>`).join('')}
-                    </div>
-                    <div id="feedback" class="feedback"></div>
-                </div>
-            </div>
-        `;
+    function changeModule(idx) {
+        currentMod = idx;
+        currentQuest = 0;
+        const btns = document.querySelectorAll('.nav-btn');
+        btns.forEach((b, i) => b.classList.toggle('active', i === idx));
+        loadQuestion();
     }
 
-    function checkAnswer(selected, correct) {
-        const fb = document.getElementById('feedback');
-        fb.style.display = 'block';
-        if(selected === correct) {
-            fb.innerHTML = "✅ " + modules.find(m => m.question.includes(document.querySelector('strong').innerText)).feedback;
-            fb.style.background = "#d4edda";
-            fb.style.color = "#155724";
+    function loadQuestion() {
+        const mod = database[currentMod];
+        const qData = mod.questions[currentQuest];
+        
+        document.getElementById('theory-text').innerHTML = `<h3>Theorie: ${mod.title}</h3><p>${mod.theory}</p>`;
+        document.getElementById('question-counter').innerText = `Frage ${currentQuest + 1} von ${mod.questions.length}`;
+        document.getElementById('question-text').innerText = qData.q;
+        
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        document.getElementById('feedback-area').style.display = 'none';
+        document.getElementById('btn-next').style.display = 'none';
+
+        qData.a.forEach((opt, i) => {
+            const div = document.createElement('div');
+            div.className = 'option';
+            div.innerText = opt;
+            div.onclick = () => checkAnswer(i);
+            container.appendChild(div);
+        });
+    }
+
+    function checkAnswer(selected) {
+        const qData = database[currentMod].questions[currentQuest];
+        const options = document.querySelectorAll('.option');
+        const feedback = document.getElementById('feedback-area');
+        
+        // Disable clicks
+        options.forEach(opt => opt.style.pointerEvents = 'none');
+
+        if(selected === qData.c) {
+            options[selected].classList.add('correct');
+            feedback.innerHTML = "✅ " + qData.f;
+            feedback.style.background = "#d4edda";
+            feedback.style.color = "#155724";
         } else {
-            fb.innerHTML = "❌ Nicht ganz! Lies dir die Theorie nochmal kurz durch und versuch es gleich nochmal.";
-            fb.style.background = "#f8d7da";
-            fb.style.color = "#721c24";
+            options[selected].classList.add('wrong');
+            options[qData.c].classList.add('correct'); // Zeige richtige Antwort
+            feedback.innerHTML = "❌ Das war leider falsch.";
+            feedback.style.background = "#f8d7da";
+            feedback.style.color = "#721c24";
+        }
+        
+        feedback.style.display = 'block';
+        document.getElementById('btn-next').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentQuest++;
+        if(currentQuest < database[currentMod].questions.length) {
+            loadQuestion();
+        } else {
+            document.getElementById('options-container').innerHTML = "<h3>Modul abgeschlossen!</h3><p>Wähle oben das nächste Modul oder wiederhole dieses.</p>";
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('feedback-area').style.display = 'none';
         }
     }
 
-    // Initial das erste Modul laden
-    showModule(0);
+    // Init
+    changeModule(0);
 </script>
 
 </body>
